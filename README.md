@@ -1,1 +1,199 @@
-# Attila-k-zleked-s
+# Attila-kőzlekedés
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Attila Közlekedés – Diszpécser térkép</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+
+html,body{
+margin:0;
+padding:0;
+height:100%;
+font-family:Arial;
+}
+
+#map{
+height:100%;
+width:100%;
+}
+
+#menuButton{
+position:absolute;
+top:15px;
+left:15px;
+z-index:1000;
+background:white;
+padding:10px;
+border-radius:6px;
+cursor:pointer;
+font-size:20px;
+}
+
+#menuPanel{
+
+position:absolute;
+top:60px;
+left:15px;
+width:260px;
+background:white;
+border-radius:10px;
+padding:15px;
+z-index:1000;
+box-shadow:0 3px 10px rgba(0,0,0,0.4);
+
+}
+
+.menuButton{
+
+width:100%;
+padding:10px;
+margin-top:8px;
+border:none;
+background:#e6e6e6;
+border-radius:8px;
+cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<div id="menuButton" onclick="toggleMenu()">☰</div>
+
+<div id="menuPanel">
+
+<h2>Attila Közlekedés<br>Diszpécser térkép</h2>
+
+<b>Térképek</b>
+
+<button class="menuButton" onclick="setStreet()">Utcai térkép</button>
+<button class="menuButton" onclick="setTopo()">Topográfia</button>
+<button class="menuButton" onclick="setRail()">Vasúti térkép</button>
+<button class="menuButton" onclick="setSatellite()">Műhold</button>
+<button class="menuButton" onclick="setCycle()">Kerékpár</button>
+
+<br><br>
+
+<b>Pozíció</b>
+
+<button class="menuButton" onclick="locate()">Saját pozíció</button>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+var map = L.map('map').setView([47.5,19.04],11);
+
+var street = L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{maxZoom:19}
+);
+
+var topo = L.tileLayer(
+'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+{maxZoom:17}
+);
+
+var rail = L.tileLayer(
+'https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
+{maxZoom:19}
+);
+
+var satellite = L.tileLayer(
+'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+{maxZoom:19}
+);
+
+var cycle = L.tileLayer(
+'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+{maxZoom:20}
+);
+
+street.addTo(map);
+
+function clearLayers(){
+
+map.removeLayer(street);
+map.removeLayer(topo);
+map.removeLayer(rail);
+map.removeLayer(satellite);
+map.removeLayer(cycle);
+
+}
+
+function setStreet(){
+clearLayers();
+street.addTo(map);
+}
+
+function setTopo(){
+clearLayers();
+topo.addTo(map);
+}
+
+function setRail(){
+clearLayers();
+rail.addTo(map);
+}
+
+function setSatellite(){
+clearLayers();
+satellite.addTo(map);
+}
+
+function setCycle(){
+clearLayers();
+cycle.addTo(map);
+}
+
+function locate(){
+
+map.locate({
+setView:true,
+maxZoom:15
+});
+
+}
+
+map.on('locationfound',function(e){
+
+var radius = e.accuracy;
+
+L.marker(e.latlng).addTo(map)
+.bindPopup("Saját pozíció").openPopup();
+
+L.circle(e.latlng,{
+radius:radius
+}).addTo(map);
+
+});
+
+function toggleMenu(){
+
+var menu=document.getElementById("menuPanel");
+
+if(menu.style.display==="none"){
+menu.style.display="block";
+}else{
+menu.style.display="none";
+}
+
+}
+
+</script>
+
+</body>
+</html>
